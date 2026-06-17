@@ -246,7 +246,7 @@ data= np.array([[0,0,0],[0,1,1],[1,0,1],[1,1,0]])
 
 
 m=MLP(input_size=2, output_size=1, hiddens=[4,4,4], activations=sigmoid,weight_init_fn=None,
-             bias_init_fn=None,  lr=0.01, momentum=0,criterion=None,threshold=0.01,num_bn_layers=None)
+             bias_init_fn=None,  lr=0.5, momentum=0,criterion=None,threshold=0.01,num_bn_layers=None)
 
 m.train(data)
 
