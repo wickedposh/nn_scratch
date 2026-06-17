@@ -42,7 +42,7 @@ class MLP():
 
     def forward(self, training):
         x=training[:,:-1]
-        y=training[:,-1]
+        y=training[:,-1].reshape(-1,1)
         activation=self.activations
         self.z1=np.dot(x, self.W0)+self.bias0
         self.h1=activation(self.z1)
@@ -61,7 +61,7 @@ class MLP():
         pred, Err = self.forward(training)
         dif = pred-y
         jaz4 = np.zeros((self.output_size, self.output_size))
-        dely = -dif
+        dely = dif
 
         delz4 = dely*pred*(1-pred)
         delh3 = delz4@self.W3.T
