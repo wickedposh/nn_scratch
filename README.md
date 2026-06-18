@@ -1,4 +1,4 @@
-Neural Network from Scratch
+## Neural Network from Scratch
 
 A multi-layer perceptron implemented in pure Numpy - forward pass, hand-derived backpropagation and momentum SGD, no autograd or ML frameworks.
 
