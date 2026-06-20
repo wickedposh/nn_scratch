@@ -1,6 +1,6 @@
 from torchvision import datasets, transforms
 import numpy as np
-from nn.py import *
+from nn import *
 train = datasets.MNIST(root='./data', train=True, download=True,
                          transform=transforms.ToTensor())
 test  = datasets.MNIST(root='./data', train=False, download=True,
@@ -53,8 +53,6 @@ def pool2d(image,kernel,stride,act):
                 oy+=1
             ox+=1
     return out
-
-
 
 class CNN:
     def __init__(self,input_size, output_size,stride,threshold,padding,K):
