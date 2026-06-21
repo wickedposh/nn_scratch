@@ -30,9 +30,9 @@ class NeuralNetwork:
             self.W.append(np.random.rand(size[i],size[i+1]))
             self.b.append(np.random.rand(size[i+1]))
 
-    def forward(self, training):
-        x=training[:,:-1]
-        y=training[:,-1].reshape(-1,1)
+    def forward(self, training,label):
+        x=training.reshape(1,-1)
+        y=label.reshape(1,-1)
         activation=self.activation
         self.z=[]
         self.act=[x]
@@ -45,10 +45,10 @@ class NeuralNetwork:
         err=np.sum((y-a)**2)/2
 
         return a,err
-    def backward(self, training):
+    def backward(self, training,label):
         dW,db=[None]*len(self.W),[None]*len(self.W)
-        x=training[:,:-1]
-        y=training[:,-1].reshape(-1,1)
+        x=training
+        y=label.reshape(-1,1)
         pred, Err = self.forward(training)
         delta=(pred-y)*self.actd(self.act[-1])
 
@@ -58,9 +58,9 @@ class NeuralNetwork:
             if i > 0:
                 delta = (delta @ self.W[i].T) * self.actd(self.act[i])
         return dW,db
-    def train(self,training):
-        x=training[:,:-1]
-        y=training[:,-1].reshape(-1,1)
+    def train(self,training,label):
+        x=training
+        y=label.reshape(-1,1)
         vW = [np.zeros_like(w) for w in self.W]
         vb = [np.zeros_like(b) for b in self.b]
         i = 0
@@ -80,7 +80,6 @@ class NeuralNetwork:
 data = np.array([[0,0,0],[0,1,1],[1,0,1],[1,1,0]])
 net = NeuralNetwork(input_size=2, hidden_size=[4,4,4], output_size=1,
                       activation="sigmoid", lr=0.5, momentum=0.9, threshold=0.01)
-net.train(data)
 
 
 
