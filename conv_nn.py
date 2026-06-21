@@ -76,29 +76,29 @@ class CNN:
 
     def conv_forward(self,image,y):
         image=conv2d(image,self.W,self.padding,self.stride)
+        y=np.eye(10)[y]
         if self.pooling!=False:
             image=pool2d(image,self.W.shape[0],self.stride,self.pooling)
         self.conv_size=image.shape
         image=image.flatten()
         image=self.activation(image)
-        image=np.concatenate([image,[y]]).reshape(1,-1)
         if self.classifier==None:
             self.classifier=NeuralNetwork(input_size=len(image),hidden_size=[4,4,2],output_size=10,lr=0.01,momentum=0.9,activation="sigmoid",threshold=0.01)
 
-        err,logits=self.classifier.forward(image)
+        logits,err=self.classifier.forward(image,y)
         return err,logits
 
     def backward(self,training,y):
         err,pred=self.conv_forward(training,y)
         dW,db=[None]*len(self.classifier.W),[None]*len(self.classifier.W)
-        y=np.eye(10)[y]
         delta=(pred-y)*self.classifier.actd(self.classifier.act[-1])
         for i in reversed(range(len(self.classifier.W))):
             dW[i] = self.classifier.act[i].T @ delta
             db[i] = delta.sum(axis=0)
             if i > 0:
                 delta = (delta @ self.classifier.W[i].T) * self.classifier.actd(self.classifier.act[i])
-        d0=delta.reshape(self.conv_size)
+        delta_input = delta @ self.classifier.W[0].T  # propagate through first layer to input
+        d0=delta_input.reshape(self.conv_size)
         oo,ii,K,_=self.W.shape
         dF_c=np.zeros_like(self.W)
         for j in range(oo):
@@ -127,13 +127,12 @@ class CNN:
             if i % 100 == 0:
                 print(f"step {i}, loss {np.sum(err):.4f}")
 
-img = X_small[0].reshape(1, 28, 28)      # one digit
+
+
+img = X_small[0].reshape(1, 28, 28)
 cnn = CNN(input_size=1, output_size=4, stride=1, activate="sigmoid",
-            lr=0.01, momentum=0.9, threshold=0.01, padding=0, K=3)
+          lr=0.01, momentum=0.9, threshold=0.01, padding=0, K=3)
 cnn.train(img, y_small[0])
-
-
-
 
 
 
