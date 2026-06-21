@@ -10,7 +10,7 @@ test  = datasets.MNIST(root='./data', train=False, download=True,
 
 X_t=train.data.numpy()
 y_t=train.targets.numpy()
-X_t=X_t.astype(np.float32)
+X_t=X_t.astype(np.float32)/255.0
 X_small,y_small=X_t[:500],y_t[:500]
 acts = {"sigmoid": (sigmoid, dsigmoid),"tanh": (tanh, dtanh),"relu": (relu, drelu),}
 
@@ -120,8 +120,8 @@ class CNN:
             self.b += vb_c
             self.W += vF
             for k in range(len(self.classifier.W)):
-                self.classifier.W[k] -= self.lr*dW[k]
-                self.classifier.b[k] -= self.lr*db[k]
+                self.classifier.W[k] += self.lr*dW[k]
+                self.classifier.b[k] += self.lr*db[k]
             err, pred = self.conv_forward(training,y)
             i += 1
             if i % 100 == 0:
@@ -131,7 +131,7 @@ class CNN:
 
 img = X_small[0].reshape(1, 28, 28)
 cnn = CNN(input_size=1, output_size=4, stride=1, activate="sigmoid",
-          lr=0.01, momentum=0.9, threshold=0.01, padding=0, K=3)
+          lr=0.0001, momentum=0.9, threshold=0.01, padding=0, K=3)
 cnn.train(img, y_small[0])
 
 
